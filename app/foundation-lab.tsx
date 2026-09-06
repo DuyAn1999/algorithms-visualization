@@ -285,7 +285,7 @@ export function FoundationLab() {
             );
           })}
           <p>Coming next</p>
-          <div className="nav-item locked"><span>04</span><b>Linear structures</b><i>locked</i></div>
+          <a className="nav-section-link" href="/linear-structures"><span>04</span><b>Linear structures</b></a>
         </nav>
         <div className="sidebar-tip"><span>✦</span><p><strong>Beginner tip</strong><small>Say what you expect before revealing the next step.</small></p></div>
       </aside>
@@ -297,6 +297,7 @@ export function FoundationLab() {
         </header>
 
         <div className="page-content foundation-content">
+          <label className="mobile-lesson-select">Choose lesson<select value={lessonId} onChange={(event) => selectLesson(event.target.value as FoundationLessonId)}>{lessonOrder.map((id) => <option value={id} key={id}>{foundationMeta[id].navLabel}</option>)}</select></label>
           <section className="page-heading foundation-heading">
             <div>
               <span className="eyebrow">FOUNDATION {lessonOrder.indexOf(lessonId) + 1} OF 5 · GUIDED LESSON</span>

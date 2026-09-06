@@ -22,3 +22,22 @@ export type {
   StringScanInput,
   UsageGuide,
 } from "./foundations.ts";
+export {
+  circularLinkedListLesson,
+  circularQueueLesson,
+  dequeLesson,
+  doublyLinkedListLesson,
+  hashTableLesson,
+  linearMeta,
+  singlyLinkedListLesson,
+} from "./linear-structures.ts";
+export type {
+  CircularListInput,
+  CircularQueueInput,
+  DequeInput,
+  DoublyListInput,
+  HashTableInput,
+  LinearLessonId,
+  LinearMeta,
+  SinglyListInput,
+} from "./linear-structures.ts";

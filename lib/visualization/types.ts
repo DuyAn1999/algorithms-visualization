@@ -5,6 +5,12 @@ export type VisualizationLayout =
   | "matrix"
   | "recursion"
   | "complexity"
+  | "linked-list"
+  | "doubly-linked-list"
+  | "circular-linked-list"
+  | "circular-queue"
+  | "deque"
+  | "hash-table"
   | "stack"
   | "queue";
 

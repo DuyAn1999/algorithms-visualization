@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
+async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", {
+    new Request(`http://localhost${path}`, {
       headers: { accept: "text/html" },
     }),
     {
@@ -48,4 +48,14 @@ test("removes the disposable starter preview", async () => {
   assert.match(layout, /AlgoLab/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("../app/_sites-preview/", import.meta.url)));
+});
+
+test("server-renders the linear data structures checkpoint", async () => {
+  const response = await render("/linear-structures");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Singly linked list/);
+  assert.match(html, /Linear data structures/);
+  assert.match(html, /Where this structure is useful/);
+  assert.match(html, /Python/);
 });
