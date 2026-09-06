@@ -1,4 +1,12 @@
-export type VisualizationLayout = "array" | "stack" | "queue";
+export type VisualizationLayout =
+  | "array"
+  | "array-cells"
+  | "string"
+  | "matrix"
+  | "recursion"
+  | "complexity"
+  | "stack"
+  | "queue";
 
 export type ItemState =
   | "idle"
@@ -25,6 +33,8 @@ export type VisualizationFrame = Readonly<{
   layout: VisualizationLayout;
   items: readonly VisualItem[];
   pointers?: readonly VisualPointer[];
+  columns?: number;
+  caption?: string;
 }>;
 
 export type VisualizationStep = Readonly<{
@@ -43,7 +53,7 @@ export type ValidationResult =
 export type LessonDefinition<TInput> = Readonly<{
   id: string;
   title: string;
-  category: "algorithm" | "data-structure";
+  category: "foundation" | "algorithm" | "data-structure";
   code: readonly string[];
   validate: (input: TInput) => ValidationResult;
   createSteps: (input: TInput) => VisualizationStep[];

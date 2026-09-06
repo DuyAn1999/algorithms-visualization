@@ -1,5 +1,5 @@
-import { EngineLab } from "./engine-lab";
+import { FoundationLab } from "./foundation-lab";
 
 export default function Home() {
-  return <EngineLab />;
+  return <FoundationLab />;
 }

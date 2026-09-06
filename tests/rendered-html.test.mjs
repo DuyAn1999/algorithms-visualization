@@ -23,7 +23,7 @@ async function render() {
   );
 }
 
-test("server-renders the AlgoLab engine checkpoint", async () => {
+test("server-renders the AlgoLab foundation checkpoint", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -31,8 +31,9 @@ test("server-renders the AlgoLab engine checkpoint", async () => {
   const html = await response.text();
   assert.match(html, /<title>AlgoLab — Learn algorithms by seeing them<\/title>/i);
   assert.match(html, /AlgoLab/);
-  assert.match(html, /One learning engine, many lessons\./);
-  assert.match(html, /Visualization engine/);
+  assert.match(html, /Arrays &amp; indices/);
+  assert.match(html, /Foundation lessons/);
+  assert.match(html, /Where this idea is useful/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -43,7 +44,7 @@ test("removes the disposable starter preview", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /<EngineLab \/>/);
+  assert.match(page, /<FoundationLab \/>/);
   assert.match(layout, /AlgoLab/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("../app/_sites-preview/", import.meta.url)));

@@ -4,3 +4,21 @@ export { queueOperationLesson } from "./queue-operation.ts";
 export type { QueueInput } from "./queue-operation.ts";
 export { stackOperationLesson } from "./stack-operation.ts";
 export type { StackInput } from "./stack-operation.ts";
+export {
+  arrayAccessLesson,
+  bigOLesson,
+  factorialLesson,
+  foundationMeta,
+  matrixScanLesson,
+  stringScanLesson,
+} from "./foundations.ts";
+export type {
+  ArrayAccessInput,
+  BigOInput,
+  FactorialInput,
+  FoundationLessonId,
+  FoundationMeta,
+  MatrixScanInput,
+  StringScanInput,
+  UsageGuide,
+} from "./foundations.ts";
