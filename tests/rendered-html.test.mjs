@@ -70,3 +70,14 @@ test("server-renders the searching and sorting checkpoint", async () => {
   assert.match(html, /Where this algorithm is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the tree foundations checkpoint", async () => {
+  const response = await render("/tree-foundations");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /General Trees &amp; Vocabulary/);
+  assert.match(html, /Tree foundations/);
+  assert.match(html, /Level-order node values/);
+  assert.match(html, /Where this tree idea is useful/);
+  assert.match(html, /Python/);
+});

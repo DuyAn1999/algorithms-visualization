@@ -205,7 +205,7 @@ export function SortingSearchingLab() {
           <p>Previous checkpoint</p><Link className="nav-section-link" href="/linear-structures"><span>✓</span><b>Linear structures</b></Link>
           <p>Search & sort</p>
           {lessonOrder.map((id, index) => <button className={`nav-item ${lessonId === id ? "active" : ""}`} onClick={() => selectLesson(id)} key={id}><span>{algorithmMeta[id].shortLabel}</span><b>{algorithmMeta[id].navLabel}</b><i>{completed.includes(id) ? "✓" : String(index + 1).padStart(2, "0")}</i></button>)}
-          <p>Coming next</p><div className="nav-item locked"><span>06</span><b>Tree foundations</b><i>locked</i></div>
+          <p>Coming next</p><Link className="nav-section-link" href="/tree-foundations"><span>06</span><b>Tree foundations</b></Link>
         </nav>
         <div className="sidebar-tip"><span>✦</span><p><strong>Read the colors</strong><small>Orange is the current decision. Lime means a value is settled or found.</small></p></div>
       </aside>

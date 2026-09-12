@@ -13,6 +13,7 @@ function freezeStep(step: VisualizationStep): VisualizationStep {
     ...step.frame,
     items: Object.freeze(items),
     pointers: pointers ? Object.freeze(pointers) : undefined,
+    output: step.frame.output ? Object.freeze([...step.frame.output]) : undefined,
   });
   return Object.freeze({ ...step, frame });
 }

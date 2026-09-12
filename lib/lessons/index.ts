@@ -44,6 +44,16 @@ export {
   selectionSortLesson,
 } from "./sorting-searching.ts";
 export type { AlgorithmLessonId, AlgorithmMeta, NumberListInput, SearchInput } from "./sorting-searching.ts";
+export {
+  binaryTreeLesson,
+  generalTreeLesson,
+  inorderLesson,
+  levelOrderLesson,
+  postorderLesson,
+  preorderLesson,
+  treeMeta,
+} from "./trees.ts";
+export type { TreeInput, TreeLessonId, TreeMeta } from "./trees.ts";
 export type {
   CircularListInput,
   CircularQueueInput,

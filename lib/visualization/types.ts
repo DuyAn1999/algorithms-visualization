@@ -12,6 +12,7 @@ export type VisualizationLayout =
   | "deque"
   | "hash-table"
   | "buckets"
+  | "tree"
   | "stack"
   | "queue";
 
@@ -27,6 +28,8 @@ export type VisualItem = Readonly<{
   id: string;
   value: string | number;
   label?: string;
+  parentId?: string | null;
+  edgeLabel?: string;
   state: ItemState;
 }>;
 
@@ -42,6 +45,7 @@ export type VisualizationFrame = Readonly<{
   pointers?: readonly VisualPointer[];
   columns?: number;
   caption?: string;
+  output?: readonly (string | number)[];
 }>;
 
 export type VisualizationStep = Readonly<{
