@@ -92,3 +92,14 @@ test("server-renders the search and priority trees checkpoint", async () => {
   assert.match(html, /Where this tree operation is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the graph foundations checkpoint", async () => {
+  const response = await render("/graph-foundations");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Graphs &amp; Vocabulary/);
+  assert.match(html, /Graph foundations/);
+  assert.match(html, /Undirected edges/);
+  assert.match(html, /Where this graph idea is useful/);
+  assert.match(html, /Python/);
+});

@@ -9,7 +9,7 @@
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
     "build": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/visualization-engine.test.ts tests/foundation-lessons.test.ts tests/linear-structures.test.ts tests/sorting-searching.test.ts tests/tree-foundations.test.ts tests/advanced-trees.test.ts",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/visualization-engine.test.ts tests/foundation-lessons.test.ts tests/linear-structures.test.ts tests/sorting-searching.test.ts tests/tree-foundations.test.ts tests/advanced-trees.test.ts tests/graphs.test.ts",
     "test:engine": "node --test tests/visualization-engine.test.ts",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",

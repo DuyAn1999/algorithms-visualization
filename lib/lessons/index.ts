@@ -65,6 +65,17 @@ export {
   heapInsertLesson,
 } from "./advanced-trees.ts";
 export type { AdvancedTreeInput, AdvancedTreeLessonId, AdvancedTreeMeta, RotationKind } from "./advanced-trees.ts";
+export {
+  adjacencyListLesson,
+  adjacencyMatrixLesson,
+  bfsLesson,
+  componentsLesson,
+  dfsLesson,
+  graphBasicsLesson,
+  graphMeta,
+  topologicalSortLesson,
+} from "./graphs.ts";
+export type { GraphEdgeInput, GraphInput, GraphLessonId, GraphMeta } from "./graphs.ts";
 export type {
   CircularListInput,
   CircularQueueInput,

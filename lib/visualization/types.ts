@@ -13,6 +13,8 @@ export type VisualizationLayout =
   | "hash-table"
   | "buckets"
   | "tree"
+  | "graph"
+  | "adjacency-list"
   | "stack"
   | "queue";
 
@@ -39,10 +41,20 @@ export type VisualPointer = Readonly<{
   itemId: string | null;
 }>;
 
+export type VisualEdge = Readonly<{
+  id: string;
+  from: string;
+  to: string;
+  label?: string;
+  directed?: boolean;
+  state: ItemState;
+}>;
+
 export type VisualizationFrame = Readonly<{
   layout: VisualizationLayout;
   items: readonly VisualItem[];
   pointers?: readonly VisualPointer[];
+  edges?: readonly VisualEdge[];
   columns?: number;
   caption?: string;
   output?: readonly (string | number)[];

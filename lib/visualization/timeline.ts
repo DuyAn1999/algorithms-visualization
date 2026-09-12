@@ -9,10 +9,12 @@ function freezeStep(step: VisualizationStep): VisualizationStep {
   const pointers = step.frame.pointers?.map((pointer) =>
     Object.freeze({ ...pointer }),
   );
+  const edges = step.frame.edges?.map((edge) => Object.freeze({ ...edge }));
   const frame = Object.freeze({
     ...step.frame,
     items: Object.freeze(items),
     pointers: pointers ? Object.freeze(pointers) : undefined,
+    edges: edges ? Object.freeze(edges) : undefined,
     output: step.frame.output ? Object.freeze([...step.frame.output]) : undefined,
   });
   return Object.freeze({ ...step, frame });

@@ -1357,6 +1357,54 @@ button.nav-item { cursor: pointer; }
 .advanced-tree-canvas > .tree-branch { min-width: 320px; }
 .advanced-tree-stage .traversal-output span { max-width: 150px; overflow-wrap: anywhere; }
 
+/* Checkpoint 8: graph foundations */
+.graph-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.graph-inputs { display: flex; align-items: end; gap: 8px; flex-wrap: wrap; }
+.graph-inputs label { display: grid; gap: 4px; color: var(--muted); font-size: 9px; font-weight: 700; }
+.graph-inputs input,
+.graph-inputs select { height: 32px; padding: 5px 9px; border: 1px solid #bdcec6; border-radius: 8px; background: var(--panel); color: var(--ink); }
+.graph-inputs label:first-child input { width: 145px; }
+.graph-inputs label:nth-child(2) input { width: min(340px, 34vw); }
+.graph-inputs input { font-family: var(--font-geist-mono), monospace; font-size: 9px; }
+.graph-inputs input[aria-invalid="true"] { border-color: #d86d4e; background: var(--orange-soft); }
+.graph-inputs button { min-height: 32px; padding: 5px 11px; border: 0; border-radius: 8px; background: var(--green); color: white; cursor: pointer; font-size: 9px; font-weight: 750; }
+.graph-inputs .secondary-action { border: 1px solid #bdcec6; background: var(--panel); color: var(--ink); }
+.graph-visual-stage { min-height: 470px; padding: 14px 16px; }
+.graph-stage,
+.graph-list-stage,
+.graph-matrix-stage { min-height: 420px; display: grid; align-content: center; gap: 13px; }
+.graph-canvas { width: min(680px, 100%); aspect-ratio: 16 / 9; margin: 0 auto; position: relative; }
+.graph-edge { height: 3px; z-index: 1; position: absolute; background: #bdcbc6; transform-origin: left center; border-radius: 99px; transition: background 180ms ease, opacity 180ms ease, height 180ms ease; }
+.graph-edge.state-active { height: 5px; background: var(--orange); z-index: 2; }
+.graph-edge.state-completed { background: #8aae65; }
+.graph-edge.state-muted { opacity: 0.2; }
+.graph-edge.directed::after { content: ""; position: absolute; right: 25px; top: 50%; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid #91a69e; transform: translateY(-50%); }
+.graph-edge.directed.state-active::after { border-left-color: var(--orange); }
+.graph-edge.directed.state-completed::after { border-left-color: #8aae65; }
+.graph-edge span { position: absolute; left: 50%; bottom: 5px; color: var(--muted); font-size: 8px; }
+.graph-node { width: 56px; height: 56px; z-index: 3; position: absolute; border: 2px solid #9fb8ae; border-radius: 50%; background: var(--panel); display: grid; place-content: center; justify-items: center; gap: 1px; box-shadow: 0 6px 16px rgba(31,65,54,0.1); transform: translate(-50%, -50%); transition: background 180ms ease, border-color 180ms ease, opacity 180ms ease, width 180ms ease; }
+.graph-node small { max-width: 50px; overflow: hidden; color: var(--muted); font-size: 6px; font-weight: 800; letter-spacing: 0.06em; white-space: nowrap; }
+.graph-node strong { font-family: var(--font-geist-mono), monospace; font-size: 14px; }
+.graph-node.state-active { border-color: var(--orange); background: var(--orange-soft); box-shadow: 0 0 0 6px rgba(255,152,117,0.13); }
+.graph-node.state-entering { border-color: #8aae65; background: #eff9dc; box-shadow: 0 0 0 6px rgba(138,174,101,0.14); }
+.graph-node.state-completed { border-color: #8aae65; background: #eff9dc; }
+.graph-node.state-muted { opacity: 0.3; }
+.graph-output { margin-top: -7px; }
+.graph-list-rows { width: min(580px, 100%); margin: 0 auto; display: grid; gap: 7px; }
+.graph-list-row { min-height: 43px; border: 1px solid #c6d6cf; border-radius: 10px; background: var(--panel); display: grid; grid-template-columns: 58px 24px minmax(0,1fr); align-items: center; overflow: hidden; transition: transform 180ms ease, background 180ms ease; }
+.graph-list-row > span { align-self: stretch; background: var(--green-soft); display: grid; place-items: center; font-family: var(--font-geist-mono), monospace; font-weight: 800; }
+.graph-list-row i { color: #6b817a; text-align: center; font-style: normal; }
+.graph-list-row strong { padding: 8px 10px; font-family: var(--font-geist-mono), monospace; font-size: 10px; }
+.graph-list-row.state-active { border-color: var(--orange); background: var(--orange-soft); transform: translateX(5px); }
+.graph-list-row.state-completed { border-color: #8aae65; background: #f5faeb; }
+.graph-matrix { width: min(600px, 100%); margin: 0 auto; display: grid; gap: 5px; }
+.graph-matrix-cell { min-height: 48px; padding: 5px 3px; border: 1px solid #cfdbd6; border-radius: 7px; background: var(--panel); display: grid; place-content: center; justify-items: center; gap: 2px; transition: background 180ms ease, opacity 180ms ease; }
+.graph-matrix-cell small { color: var(--muted); font-size: 6px; }
+.graph-matrix-cell strong { font-family: var(--font-geist-mono), monospace; font-size: 11px; }
+.graph-matrix-cell.state-active { border-color: var(--orange); background: var(--orange-soft); }
+.graph-matrix-cell.state-completed { background: #eff9dc; }
+.graph-matrix-cell.state-muted { opacity: 0.42; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
@@ -1399,6 +1447,9 @@ button.nav-item { cursor: pointer; }
   .bucket-grid { grid-template-columns: repeat(2, minmax(68px, 1fr)); }
   .tree-toolbar { grid-template-columns: 1fr; }
   .tree-inputs input { width: min(100%, 420px); }
+  .graph-toolbar { grid-template-columns: 1fr; }
+  .graph-inputs label:nth-child(2) { flex: 1 1 280px; }
+  .graph-inputs label:nth-child(2) input { width: 100%; }
 }
 
 @media (max-width: 480px) {
@@ -1445,4 +1496,16 @@ button.nav-item { cursor: pointer; }
   .tree-node strong { font-size: 12px; }
   .tree-edge-label { display: none; }
   .advanced-tree-canvas > .tree-branch { min-width: 270px; }
+  .graph-inputs { align-items: stretch; }
+  .graph-inputs label:first-child,
+  .graph-inputs label:nth-child(2) { width: 100%; flex-basis: 100%; }
+  .graph-inputs label:first-child input,
+  .graph-inputs label:nth-child(2) input { width: 100%; }
+  .graph-visual-stage { padding-inline: 7px; }
+  .graph-node { width: 45px; height: 45px; }
+  .graph-node strong { font-size: 11px; }
+  .graph-node small { max-width: 40px; font-size: 5px; }
+  .graph-edge.directed::after { right: 19px; }
+  .graph-matrix { gap: 3px; }
+  .graph-matrix-cell { min-height: 40px; }
 }
