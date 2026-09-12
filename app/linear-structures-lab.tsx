@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   circularLinkedListLesson,
   circularQueueLesson,
@@ -241,14 +242,14 @@ export function LinearStructuresLab() {
         <div className="checkpoint-progress"><div><span>Linear structures</span><strong>{completed.length} / 8</strong></div><div className="progress-track"><span style={{ width: `${completed.length * 12.5}%` }} /></div></div>
         <nav aria-label="Linear data structure lessons">
           <p>Previous checkpoint</p>
-          <a className="nav-section-link" href="/"><span>✓</span><b>Foundations</b></a>
+          <Link className="nav-section-link" href="/"><span>✓</span><b>Foundations</b></Link>
           <p>Linear structures</p>
           {lessonOrder.map((id, index) => {
             const lesson = linearMeta[id];
             return <button className={`nav-item ${lessonId === id ? "active" : ""}`} onClick={() => selectLesson(id)} key={id}><span>{lesson.shortLabel}</span><b>{lesson.navLabel}</b><i>{completed.includes(id) ? "✓" : String(index + 1).padStart(2, "0")}</i></button>;
           })}
           <p>Coming next</p>
-          <div className="nav-item locked"><span>05</span><b>Sorting & searching</b><i>locked</i></div>
+          <Link className="nav-section-link" href="/sorting-searching"><span>05</span><b>Sorting & searching</b></Link>
         </nav>
         <div className="sidebar-tip"><span>✦</span><p><strong>Follow the labels</strong><small>HEAD, TAIL, TOP, FRONT, and REAR explain where operations happen.</small></p></div>
       </aside>

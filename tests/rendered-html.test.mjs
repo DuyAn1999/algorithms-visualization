@@ -59,3 +59,14 @@ test("server-renders the linear data structures checkpoint", async () => {
   assert.match(html, /Where this structure is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the searching and sorting checkpoint", async () => {
+  const response = await render("/sorting-searching");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Linear Search/);
+  assert.match(html, /Searching &amp; sorting/);
+  assert.match(html, /Test values/);
+  assert.match(html, /Where this algorithm is useful/);
+  assert.match(html, /Python/);
+});

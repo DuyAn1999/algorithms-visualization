@@ -31,6 +31,19 @@ export {
   linearMeta,
   singlyLinkedListLesson,
 } from "./linear-structures.ts";
+export {
+  algorithmMeta,
+  binarySearchLesson,
+  countingSortLesson,
+  heapSortLesson,
+  insertionSortLesson,
+  linearSearchLesson,
+  mergeSortLesson,
+  quickSortLesson,
+  radixSortLesson,
+  selectionSortLesson,
+} from "./sorting-searching.ts";
+export type { AlgorithmLessonId, AlgorithmMeta, NumberListInput, SearchInput } from "./sorting-searching.ts";
 export type {
   CircularListInput,
   CircularQueueInput,

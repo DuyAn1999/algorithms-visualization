@@ -11,6 +11,7 @@ export type VisualizationLayout =
   | "circular-queue"
   | "deque"
   | "hash-table"
+  | "buckets"
   | "stack"
   | "queue";
 
