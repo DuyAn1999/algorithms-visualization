@@ -54,6 +54,17 @@ export {
   treeMeta,
 } from "./trees.ts";
 export type { TreeInput, TreeLessonId, TreeMeta } from "./trees.ts";
+export {
+  advancedTreeMeta,
+  avlBalanceLesson,
+  bstDeleteLesson,
+  bstInsertLesson,
+  bstRuleLesson,
+  bstSearchLesson,
+  heapExtractLesson,
+  heapInsertLesson,
+} from "./advanced-trees.ts";
+export type { AdvancedTreeInput, AdvancedTreeLessonId, AdvancedTreeMeta, RotationKind } from "./advanced-trees.ts";
 export type {
   CircularListInput,
   CircularQueueInput,

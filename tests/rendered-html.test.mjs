@@ -81,3 +81,14 @@ test("server-renders the tree foundations checkpoint", async () => {
   assert.match(html, /Where this tree idea is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the search and priority trees checkpoint", async () => {
+  const response = await render("/search-trees");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Binary Search Tree Rule/);
+  assert.match(html, /Search &amp; priority trees/);
+  assert.match(html, /BST insertion order/);
+  assert.match(html, /Where this tree operation is useful/);
+  assert.match(html, /Python/);
+});

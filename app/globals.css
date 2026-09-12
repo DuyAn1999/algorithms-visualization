@@ -1349,6 +1349,14 @@ button.nav-item { cursor: pointer; }
 .traversal-output span:not(:last-child)::after { content: "→"; position: absolute; top: 50%; right: -15px; color: #7c918a; transform: translateY(-50%); }
 .traversal-output em { color: var(--muted); font-size: 9px; font-style: normal; }
 
+/* Checkpoint 7: search trees and priority trees */
+.advanced-tree-toolbar .operation-value-input { width: 86px; }
+.advanced-tree-visual-stage { min-height: 470px; }
+.advanced-tree-stage { width: 100%; }
+.advanced-tree-canvas { min-height: 255px; overflow: auto; padding: 10px 8px 18px; }
+.advanced-tree-canvas > .tree-branch { min-width: 320px; }
+.advanced-tree-stage .traversal-output span { max-width: 150px; overflow-wrap: anywhere; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
@@ -1436,4 +1444,5 @@ button.nav-item { cursor: pointer; }
   .tree-node { width: 50px; height: 50px; }
   .tree-node strong { font-size: 12px; }
   .tree-edge-label { display: none; }
+  .advanced-tree-canvas > .tree-branch { min-width: 270px; }
 }

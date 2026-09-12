@@ -143,7 +143,7 @@ export function TreeFoundationsLab() {
           <p>Previous checkpoint</p><Link className="nav-section-link" href="/sorting-searching"><span>✓</span><b>Search & sort</b></Link>
           <p>Tree foundations</p>
           {lessonOrder.map((id, index) => <button className={`nav-item ${lessonId === id ? "active" : ""}`} onClick={() => selectLesson(id)} key={id}><span>{treeMeta[id].shortLabel}</span><b>{treeMeta[id].navLabel}</b><i>{completed.includes(id) ? "✓" : String(index + 1).padStart(2, "0")}</i></button>)}
-          <p>Coming next</p><div className="nav-item locked"><span>07</span><b>BST, heaps & balance</b><i>locked</i></div>
+          <p>Coming next</p><Link className="nav-section-link" href="/search-trees"><span>07</span><b>BST, heaps & balance</b></Link>
         </nav>
         <div className="sidebar-tip"><span>✦</span><p><strong>Trace the edges</strong><small>Start at ROOT and follow labeled branches. Orange shows the relationship being explained.</small></p></div>
       </aside>
