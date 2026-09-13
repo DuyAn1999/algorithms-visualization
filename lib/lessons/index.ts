@@ -76,6 +76,17 @@ export {
   topologicalSortLesson,
 } from "./graphs.ts";
 export type { GraphEdgeInput, GraphInput, GraphLessonId, GraphMeta } from "./graphs.ts";
+export {
+  bellmanFordLesson,
+  dijkstraLesson,
+  floydWarshallLesson,
+  kruskalLesson,
+  primLesson,
+  unionFindLesson,
+  weightedBasicsLesson,
+  weightedGraphMeta,
+} from "./weighted-graphs.ts";
+export type { WeightedEdgeInput, WeightedGraphInput, WeightedGraphLessonId, WeightedGraphMeta } from "./weighted-graphs.ts";
 export type {
   CircularListInput,
   CircularQueueInput,

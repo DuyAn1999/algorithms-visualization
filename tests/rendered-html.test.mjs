@@ -103,3 +103,14 @@ test("server-renders the graph foundations checkpoint", async () => {
   assert.match(html, /Where this graph idea is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the weighted graph algorithms checkpoint", async () => {
+  const response = await render("/weighted-graphs");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Weights, Paths &amp; Relaxation/);
+  assert.match(html, /Weighted graphs/);
+  assert.match(html, /Undirected weighted edges/);
+  assert.match(html, /Where this weighted algorithm is useful/);
+  assert.match(html, /Python/);
+});

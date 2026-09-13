@@ -1405,6 +1405,35 @@ button.nav-item { cursor: pointer; }
 .graph-matrix-cell.state-completed { background: #eff9dc; }
 .graph-matrix-cell.state-muted { opacity: 0.42; }
 
+/* Checkpoint 9: weighted graphs */
+.weighted-visual-stage { min-height: 490px; }
+.weighted-edge-wrap { display: contents; }
+.weight-badge {
+  min-width: 25px;
+  padding: 3px 6px;
+  z-index: 4;
+  position: absolute;
+  border: 2px solid #9fb8ae;
+  border-radius: 99px;
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  line-height: 1;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  transition: background 180ms ease, border-color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+.weight-badge.state-active { border-color: var(--orange); background: var(--orange-soft); transform: translate(-50%, -50%) scale(1.12); }
+.weight-badge.state-completed { border-color: #8aae65; background: #eff9dc; }
+.weight-badge.state-muted { opacity: 0.3; }
+.weighted-graph-node small { max-width: 52px; }
+.weighted-stage .graph-canvas { margin-bottom: 2px; }
+.weighted-output span,
+.weighted-matrix-output span { max-width: 170px; overflow-wrap: anywhere; }
+.weighted-matrix-stage { min-height: 440px; }
+.weighted-inputs label:nth-child(2) input { width: min(440px, 42vw); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
@@ -1450,6 +1479,7 @@ button.nav-item { cursor: pointer; }
   .graph-toolbar { grid-template-columns: 1fr; }
   .graph-inputs label:nth-child(2) { flex: 1 1 280px; }
   .graph-inputs label:nth-child(2) input { width: 100%; }
+  .weighted-inputs label:nth-child(2) { flex-basis: 360px; }
 }
 
 @media (max-width: 480px) {
@@ -1508,4 +1538,5 @@ button.nav-item { cursor: pointer; }
   .graph-edge.directed::after { right: 19px; }
   .graph-matrix { gap: 3px; }
   .graph-matrix-cell { min-height: 40px; }
+  .weight-badge { min-width: 21px; padding: 2px 4px; font-size: 7px; }
 }
