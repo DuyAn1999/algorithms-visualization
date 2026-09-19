@@ -125,3 +125,15 @@ test("server-renders the algorithmic techniques checkpoint", async () => {
   assert.match(html, /Where this technique is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the complete curriculum map", async () => {
+  const response = await render("/curriculum");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Course map &amp; review/);
+  assert.match(html, /57/);
+  assert.match(html, /Linear data structures/);
+  assert.match(html, /Weighted graphs/);
+  assert.match(html, /Algorithmic techniques/);
+  assert.match(html, /Progress saved locally|Local learning profile/);
+});
