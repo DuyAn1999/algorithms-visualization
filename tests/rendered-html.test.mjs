@@ -114,3 +114,14 @@ test("server-renders the weighted graph algorithms checkpoint", async () => {
   assert.match(html, /Where this weighted algorithm is useful/);
   assert.match(html, /Python/);
 });
+
+test("server-renders the algorithmic techniques checkpoint", async () => {
+  const response = await render("/algorithmic-techniques");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Brute Force: Try Every Pair/);
+  assert.match(html, /Algorithmic techniques/);
+  assert.match(html, /Pair target/);
+  assert.match(html, /Where this technique is useful/);
+  assert.match(html, /Python/);
+});

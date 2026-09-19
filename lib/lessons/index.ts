@@ -87,6 +87,17 @@ export {
   weightedGraphMeta,
 } from "./weighted-graphs.ts";
 export type { WeightedEdgeInput, WeightedGraphInput, WeightedGraphLessonId, WeightedGraphMeta } from "./weighted-graphs.ts";
+export {
+  backtrackingLesson,
+  bruteForceLesson,
+  divideConquerLesson,
+  dynamicProgrammingLesson,
+  greedyLesson,
+  memoizationLesson,
+  slidingWindowLesson,
+  techniqueMeta,
+} from "./algorithmic-techniques.ts";
+export type { TechniqueInput, TechniqueLessonId, TechniqueMeta } from "./algorithmic-techniques.ts";
 export type {
   CircularListInput,
   CircularQueueInput,

@@ -1434,6 +1434,25 @@ button.nav-item { cursor: pointer; }
 .weighted-matrix-stage { min-height: 440px; }
 .weighted-inputs label:nth-child(2) input { width: min(440px, 42vw); }
 
+/* Checkpoint 10: algorithmic techniques */
+.technique-visual-stage { min-height: 470px; padding: 16px; }
+.technique-stage { min-height: 420px; display: grid; align-content: center; gap: 14px; }
+.technique-cell-grid { width: min(720px, 100%); margin: 0 auto; display: flex; align-items: flex-start; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.technique-cell-slot { min-width: 68px; display: grid; justify-items: center; gap: 5px; }
+.technique-cell-slot .foundation-cell { width: 100%; min-width: 68px; padding: 10px 8px; }
+.technique-cell-grid.compact { gap: 5px; }
+.technique-cell-grid.compact .technique-cell-slot { min-width: 50px; }
+.technique-cell-grid.compact .foundation-cell { min-width: 50px; padding: 8px 5px; }
+.technique-cell-grid.compact .foundation-cell strong { font-size: 12px; }
+.technique-cell-grid.compact .foundation-cell span { font-size: 7px; }
+.technique-pointer-labels { min-height: 16px; display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; }
+.technique-pointer-labels small { padding: 2px 5px; border-radius: 99px; background: var(--orange-soft); color: #9d4b30; font-size: 6px; font-weight: 800; letter-spacing: 0.05em; white-space: nowrap; }
+.technique-call-stack { max-height: 290px; overflow: auto; padding: 3px 8px; }
+.technique-call-stack .call-frame { width: min(390px, 100%); }
+.technique-output { margin-top: 0; }
+.technique-output span { max-width: 180px; overflow-wrap: anywhere; }
+.technique-inputs input[type="number"] { width: 105px; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
@@ -1539,4 +1558,10 @@ button.nav-item { cursor: pointer; }
   .graph-matrix { gap: 3px; }
   .graph-matrix-cell { min-height: 40px; }
   .weight-badge { min-width: 21px; padding: 2px 4px; font-size: 7px; }
+  .technique-visual-stage { padding-inline: 7px; }
+  .technique-cell-grid { gap: 5px; }
+  .technique-cell-slot,
+  .technique-cell-slot .foundation-cell { min-width: 54px; }
+  .technique-call-stack .call-frame { grid-template-columns: 50px minmax(0, 1fr); }
+  .technique-call-stack .call-frame small { grid-column: 2; }
 }
