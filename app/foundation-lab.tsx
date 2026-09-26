@@ -18,6 +18,10 @@ import type {
   VisualItem,
 } from "@/lib/visualization/types.ts";
 import { useVisualizationPlayer } from "./use-visualization-player";
+import { CourseMenu } from "./course-menu";
+import { usePlaybackShortcuts } from "./use-playback-shortcuts";
+import { ProgressBadge } from "./progress-badge";
+import { parseCompletedLessons, readLocalValue, writeLocalValue } from "@/lib/local-progress.ts";
 
 const lessonOrder: FoundationLessonId[] = [
   "arrays",
@@ -215,41 +219,22 @@ export function FoundationLab() {
   const step = player.currentStep;
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("algolab-foundation-progress");
-    if (!stored) return;
-    try {
-      const parsed = JSON.parse(stored) as FoundationLessonId[];
-      setCompleted(parsed.filter((id) => lessonOrder.includes(id)));
-    } catch {
-      window.localStorage.removeItem("algolab-foundation-progress");
-    }
+    const restored = parseCompletedLessons(readLocalValue("algolab-foundation-progress"), lessonOrder);
+    queueMicrotask(() => setCompleted(restored));
   }, []);
 
   useEffect(() => {
     if (player.state.status !== "completed") return;
-    setCompleted((previous) => {
+    // Parse before scheduling: malformed stored data must never escape a microtask.
+    queueMicrotask(() => setCompleted((previous) => {
       if (previous.includes(lessonId)) return previous;
-      const next = [...previous, lessonId];
-      window.localStorage.setItem("algolab-foundation-progress", JSON.stringify(next));
+      const next = [...new Set([...parseCompletedLessons(readLocalValue("algolab-foundation-progress"), lessonOrder), ...previous, lessonId])];
+      writeLocalValue("algolab-foundation-progress", JSON.stringify(next));
       return next;
-    });
+    }));
   }, [lessonId, player.state.status]);
 
-  useEffect(() => {
-    const handleKeyboard = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.tagName === "INPUT" || target?.tagName === "BUTTON") return;
-      if (event.code === "Space") {
-        event.preventDefault();
-        player.state.status === "playing" ? player.pause() : player.play();
-      }
-      if (event.key === "ArrowRight") player.next();
-      if (event.key === "ArrowLeft") player.previous();
-      if (event.key.toLowerCase() === "r") player.reset();
-    };
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [player]);
+  usePlaybackShortcuts(player);
 
   const selectLesson = (nextLesson: FoundationLessonId) => {
     player.reset();
@@ -293,7 +278,7 @@ export function FoundationLab() {
       <section className="workspace">
         <header className="topbar">
           <div><span>Checkpoint 3</span><b>/</b><strong>Foundations</strong></div>
-          <span className="local-badge"><i />Progress saved locally</span>
+          <div className="topbar-actions"><CourseMenu currentPath="/" /><ProgressBadge /></div>
         </header>
 
         <div className="page-content foundation-content">

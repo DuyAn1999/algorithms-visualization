@@ -15,6 +15,10 @@ import {
 import { createTimeline } from "@/lib/visualization/index.ts";
 import type { VisualizationStep, VisualItem } from "@/lib/visualization/types.ts";
 import { useVisualizationPlayer } from "./use-visualization-player";
+import { CourseMenu } from "./course-menu";
+import { usePlaybackShortcuts } from "./use-playback-shortcuts";
+import { ProgressBadge } from "./progress-badge";
+import { parseCompletedLessons, readLocalValue, writeLocalValue } from "@/lib/local-progress.ts";
 
 const lessonOrder: TreeLessonId[] = ["general-tree", "binary-tree", "preorder", "inorder", "postorder", "level-order"];
 const definitions = { "general-tree": generalTreeLesson, "binary-tree": binaryTreeLesson, preorder: preorderLesson, inorder: inorderLesson, postorder: postorderLesson, "level-order": levelOrderLesson } as const;
@@ -84,38 +88,22 @@ export function TreeFoundationsLab() {
   const definition = definitions[lessonId];
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("algolab-tree-progress");
-    if (!stored) return;
-    try {
-      const parsed = JSON.parse(stored) as TreeLessonId[];
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCompleted(parsed.filter((id) => lessonOrder.includes(id)));
-    } catch { window.localStorage.removeItem("algolab-tree-progress"); }
+    const restored = parseCompletedLessons(readLocalValue("algolab-tree-progress"), lessonOrder);
+    queueMicrotask(() => setCompleted(restored));
   }, []);
 
   useEffect(() => {
     if (player.state.status !== "completed") return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCompleted((previous) => {
+    // Parse before scheduling: malformed stored data must never escape a microtask.
+    queueMicrotask(() => setCompleted((previous) => {
       if (previous.includes(lessonId)) return previous;
-      const next = [...previous, lessonId];
-      window.localStorage.setItem("algolab-tree-progress", JSON.stringify(next));
+      const next = [...new Set([...parseCompletedLessons(readLocalValue("algolab-tree-progress"), lessonOrder), ...previous, lessonId])];
+      writeLocalValue("algolab-tree-progress", JSON.stringify(next));
       return next;
-    });
+    }));
   }, [lessonId, player.state.status]);
 
-  useEffect(() => {
-    const handleKeyboard = (event: KeyboardEvent) => {
-      const element = event.target as HTMLElement | null;
-      if (["INPUT", "BUTTON", "SELECT"].includes(element?.tagName ?? "")) return;
-      if (event.code === "Space") { event.preventDefault(); if (player.state.status === "playing") player.pause(); else player.play(); }
-      if (event.key === "ArrowRight") player.next();
-      if (event.key === "ArrowLeft") player.previous();
-      if (event.key.toLowerCase() === "r") player.reset();
-    };
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [player]);
+  usePlaybackShortcuts(player);
 
   const selectLesson = (next: TreeLessonId) => { player.reset(); setLessonId(next); setInputError(""); };
 
@@ -149,7 +137,7 @@ export function TreeFoundationsLab() {
       </aside>
 
       <section className="workspace">
-        <header className="topbar"><div><span>Checkpoint 6</span><b>/</b><strong>Tree foundations</strong></div><span className="local-badge"><i />Progress saved locally</span></header>
+        <header className="topbar"><div><span>Checkpoint 6</span><b>/</b><strong>Tree foundations</strong></div><div className="topbar-actions"><CourseMenu currentPath="/tree-foundations" /><ProgressBadge /></div></header>
         <div className="page-content linear-content">
           <label className="mobile-lesson-select">Choose lesson<select value={lessonId} onChange={(event) => selectLesson(event.target.value as TreeLessonId)}>{lessonOrder.map((id) => <option value={id} key={id}>{treeMeta[id].navLabel}</option>)}</select></label>
           <section className="page-heading foundation-heading"><div><span className="eyebrow">TREE LESSON {lessonOrder.indexOf(lessonId) + 1} OF 6 · FOLLOW THE BRANCHES</span><h1>{meta.title}</h1><p>{meta.description}</p></div><div className="shortcut-hint"><span>⌨</span><p><strong>Keyboard controls</strong><small>Space · ← → · R</small></p></div></section>

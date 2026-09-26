@@ -17,6 +17,10 @@ import {
 import { createTimeline } from "@/lib/visualization/index.ts";
 import type { VisualizationStep, VisualItem } from "@/lib/visualization/types.ts";
 import { useVisualizationPlayer } from "./use-visualization-player";
+import { CourseMenu } from "./course-menu";
+import { usePlaybackShortcuts } from "./use-playback-shortcuts";
+import { ProgressBadge } from "./progress-badge";
+import { parseCompletedLessons, readLocalValue, writeLocalValue } from "@/lib/local-progress.ts";
 
 const lessonOrder: AdvancedTreeLessonId[] = ["bst-rule", "bst-search", "bst-insert", "bst-delete", "heap-insert", "heap-extract", "avl-balance"];
 const definitions = { "bst-rule": bstRuleLesson, "bst-search": bstSearchLesson, "bst-insert": bstInsertLesson, "bst-delete": bstDeleteLesson, "heap-insert": heapInsertLesson, "heap-extract": heapExtractLesson, "avl-balance": avlBalanceLesson } as const;
@@ -71,25 +75,22 @@ export function SearchTreesLab() {
   const player = useVisualizationPlayer(demo); const meta = advancedTreeMeta[lessonId]; const step = player.currentStep; const definition = definitions[lessonId];
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("algolab-advanced-tree-progress");
-    if (!stored) return;
-    try {
-      const parsed = JSON.parse(stored) as AdvancedTreeLessonId[];
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCompleted(parsed.filter((id) => lessonOrder.includes(id)));
-    } catch { window.localStorage.removeItem("algolab-advanced-tree-progress"); }
+    const restored = parseCompletedLessons(readLocalValue("algolab-advanced-tree-progress"), lessonOrder);
+    queueMicrotask(() => setCompleted(restored));
   }, []);
+
   useEffect(() => {
     if (player.state.status !== "completed") return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCompleted((previous) => {
+    // Parse before scheduling: malformed stored data must never escape a microtask.
+    queueMicrotask(() => setCompleted((previous) => {
       if (previous.includes(lessonId)) return previous;
-      const next = [...previous, lessonId];
-      window.localStorage.setItem("algolab-advanced-tree-progress", JSON.stringify(next));
+      const next = [...new Set([...parseCompletedLessons(readLocalValue("algolab-advanced-tree-progress"), lessonOrder), ...previous, lessonId])];
+      writeLocalValue("algolab-advanced-tree-progress", JSON.stringify(next));
       return next;
-    });
+    }));
   }, [lessonId, player.state.status]);
-  useEffect(() => { const handleKeyboard = (event: KeyboardEvent) => { const element = event.target as HTMLElement | null; if (["INPUT", "BUTTON", "SELECT"].includes(element?.tagName ?? "")) return; if (event.code === "Space") { event.preventDefault(); if (player.state.status === "playing") player.pause(); else player.play(); } if (event.key === "ArrowRight") player.next(); if (event.key === "ArrowLeft") player.previous(); if (event.key.toLowerCase() === "r") player.reset(); }; window.addEventListener("keydown", handleKeyboard); return () => window.removeEventListener("keydown", handleKeyboard); }, [player]);
+
+  usePlaybackShortcuts(player);
 
   const selectLesson = (next: AdvancedTreeLessonId) => { player.reset(); const preset = defaults[next]; setLessonId(next); setValues(preset.values); setDraft(preset.values.join(", ")); setOperationValue(preset.value); setOperationDraft(String(preset.value)); setRotation("ll"); setInputError(""); };
 
@@ -127,7 +128,7 @@ export function SearchTreesLab() {
   };
 
   return <main className="app-shell"><aside className="sidebar linear-sidebar tree-sidebar"><div className="brand"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span><strong>AlgoLab</strong><small>Learn by seeing</small></span></div><div className="checkpoint-progress"><div><span>Search trees</span><strong>{completed.length} / 7</strong></div><div className="progress-track"><span style={{ width: `${completed.length * (100 / 7)}%` }} /></div></div><nav aria-label="Search tree and heap lessons"><p>Previous checkpoint</p><Link className="nav-section-link" href="/tree-foundations"><span>✓</span><b>Tree foundations</b></Link><p>Search & priority trees</p>{lessonOrder.map((id, index) => <button className={`nav-item ${lessonId === id ? "active" : ""}`} onClick={() => selectLesson(id)} key={id}><span>{advancedTreeMeta[id].shortLabel}</span><b>{advancedTreeMeta[id].navLabel}</b><i>{completed.includes(id) ? "✓" : String(index + 1).padStart(2, "0")}</i></button>)}<p>Coming next</p><Link className="nav-section-link" href="/graph-foundations"><span>08</span><b>Graph foundations</b></Link></nav><div className="sidebar-tip"><span>✦</span><p><strong>Watch the shape</strong><small>Search follows ordering. Heaps preserve completeness. AVL rotations preserve both order and height.</small></p></div></aside>
-    <section className="workspace"><header className="topbar"><div><span>Checkpoint 7</span><b>/</b><strong>Search & priority trees</strong></div><span className="local-badge"><i />Progress saved locally</span></header><div className="page-content linear-content"><label className="mobile-lesson-select">Choose lesson<select value={lessonId} onChange={(event) => selectLesson(event.target.value as AdvancedTreeLessonId)}>{lessonOrder.map((id) => <option value={id} key={id}>{advancedTreeMeta[id].navLabel}</option>)}</select></label>
+    <section className="workspace"><header className="topbar"><div><span>Checkpoint 7</span><b>/</b><strong>Search & priority trees</strong></div><div className="topbar-actions"><CourseMenu currentPath="/search-trees" /><ProgressBadge /></div></header><div className="page-content linear-content"><label className="mobile-lesson-select">Choose lesson<select value={lessonId} onChange={(event) => selectLesson(event.target.value as AdvancedTreeLessonId)}>{lessonOrder.map((id) => <option value={id} key={id}>{advancedTreeMeta[id].navLabel}</option>)}</select></label>
       <section className="page-heading foundation-heading"><div><span className="eyebrow">TREE OPERATION {lessonOrder.indexOf(lessonId) + 1} OF 7 · TRACE EVERY DECISION</span><h1>{meta.title}</h1><p>{meta.description}</p></div><div className="shortcut-hint"><span>⌨</span><p><strong>Keyboard controls</strong><small>Space · ← → · R</small></p></div></section><section className="concept-strip"><div className="analogy-mark">{meta.shortLabel}</div><div><small>Start with a familiar picture · {meta.analogy}</small><strong>{meta.concept}</strong></div><span>{meta.rule}</span></section>
       <section className="lesson-toolbar tree-toolbar advanced-tree-toolbar"><div className="tree-inputs">{lessonId !== "avl-balance" && <label>{isHeap ? "Heap array" : "BST insertion order"}<input type="text" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && applyInput()} aria-invalid={Boolean(inputError)} /></label>}{operationControl()}<button type="button" onClick={applyInput}>Apply</button>{lessonId !== "avl-balance" && <button type="button" className="secondary-action" onClick={randomize}>New values</button>}</div><div className="lesson-status"><span className={`status-dot status-${player.state.status}`} />{player.state.status === "idle" ? "Ready to explore" : player.state.status}</div><div className="input-feedback"><span>{isHeap ? "Array order maps directly onto the complete tree." : lessonId === "avl-balance" ? "Switch cases to compare single and double rotations." : "Values are inserted from left to right to build the BST."}</span>{inputError && <strong role="alert">{inputError}</strong>}</div></section>
       <section className="learning-grid foundation-learning-grid"><article className="visual-card"><div className="card-header"><div><span className="live-dot" /><strong>Tree operation playground</strong></div><span>Step {player.state.index < 0 ? 0 : player.state.index + 1} / {demo.steps.length}</span></div><div className="visual-stage tree-visual-stage advanced-tree-visual-stage"><AdvancedTreeStage step={step} lessonId={lessonId} /></div><div className="explanation-row"><span>i</span><p><small>What’s happening</small><strong>{step.explanation}</strong></p></div><div className="playback-controls"><button onClick={player.reset} aria-label="Reset visualization">↺</button><button onClick={player.previous} disabled={player.state.index < 0} aria-label="Previous step">‹</button><button className="play-button" onClick={player.state.status === "playing" ? player.pause : player.play} aria-label={player.state.status === "playing" ? "Pause" : "Play"}>{player.state.status === "playing" ? "Ⅱ" : "▶"}</button><button onClick={player.next} disabled={player.state.status === "completed"} aria-label="Next step">›</button><label className="speed-control"><span>Speed <b>{player.state.speed}×</b></span><input type="range" min="1" max="5" value={player.state.speed} onChange={(event) => player.setSpeed(Number(event.target.value))} /></label></div><div className="timeline-progress"><span style={{ width: `${Math.max(0, ((player.state.index + 1) / demo.steps.length) * 100)}%` }} /></div></article>

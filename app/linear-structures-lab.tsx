@@ -23,6 +23,10 @@ import type {
   VisualItem,
 } from "@/lib/visualization/types.ts";
 import { useVisualizationPlayer } from "./use-visualization-player";
+import { CourseMenu } from "./course-menu";
+import { usePlaybackShortcuts } from "./use-playback-shortcuts";
+import { ProgressBadge } from "./progress-badge";
+import { parseCompletedLessons, readLocalValue, writeLocalValue } from "@/lib/local-progress.ts";
 
 const lessonOrder: LinearLessonId[] = [
   "singly-linked-list",
@@ -181,38 +185,22 @@ export function LinearStructuresLab() {
   const step = player.currentStep;
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("algolab-linear-progress");
-    if (!stored) return;
-    try {
-      const parsed = JSON.parse(stored) as LinearLessonId[];
-      setCompleted(parsed.filter((id) => lessonOrder.includes(id)));
-    } catch {
-      window.localStorage.removeItem("algolab-linear-progress");
-    }
+    const restored = parseCompletedLessons(readLocalValue("algolab-linear-progress"), lessonOrder);
+    queueMicrotask(() => setCompleted(restored));
   }, []);
 
   useEffect(() => {
     if (player.state.status !== "completed") return;
-    setCompleted((previous) => {
+    // Parse before scheduling: malformed stored data must never escape a microtask.
+    queueMicrotask(() => setCompleted((previous) => {
       if (previous.includes(lessonId)) return previous;
-      const next = [...previous, lessonId];
-      window.localStorage.setItem("algolab-linear-progress", JSON.stringify(next));
+      const next = [...new Set([...parseCompletedLessons(readLocalValue("algolab-linear-progress"), lessonOrder), ...previous, lessonId])];
+      writeLocalValue("algolab-linear-progress", JSON.stringify(next));
       return next;
-    });
+    }));
   }, [lessonId, player.state.status]);
 
-  useEffect(() => {
-    const handleKeyboard = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (["INPUT", "BUTTON", "SELECT"].includes(target?.tagName ?? "")) return;
-      if (event.code === "Space") { event.preventDefault(); player.state.status === "playing" ? player.pause() : player.play(); }
-      if (event.key === "ArrowRight") player.next();
-      if (event.key === "ArrowLeft") player.previous();
-      if (event.key.toLowerCase() === "r") player.reset();
-    };
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [player]);
+  usePlaybackShortcuts(player);
 
   const selectLesson = (next: LinearLessonId) => {
     player.reset();
@@ -255,7 +243,7 @@ export function LinearStructuresLab() {
       </aside>
 
       <section className="workspace">
-        <header className="topbar"><div><span>Checkpoint 4</span><b>/</b><strong>Linear data structures</strong></div><span className="local-badge"><i />Progress saved locally</span></header>
+        <header className="topbar"><div><span>Checkpoint 4</span><b>/</b><strong>Linear data structures</strong></div><div className="topbar-actions"><CourseMenu currentPath="/linear-structures" /><ProgressBadge /></div></header>
         <div className="page-content linear-content">
           <label className="mobile-lesson-select">Choose lesson<select value={lessonId} onChange={(event) => selectLesson(event.target.value as LinearLessonId)}>{lessonOrder.map((id) => <option value={id} key={id}>{linearMeta[id].navLabel}</option>)}</select></label>
           <section className="page-heading foundation-heading"><div><span className="eyebrow">LINEAR STRUCTURE {lessonOrder.indexOf(lessonId) + 1} OF 8 · GUIDED OPERATION</span><h1>{meta.title}</h1><p>{meta.description}</p></div><div className="shortcut-hint"><span>⌨</span><p><strong>Keyboard controls</strong><small>Space · ← → · R</small></p></div></section>

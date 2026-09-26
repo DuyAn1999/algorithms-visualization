@@ -58,6 +58,15 @@ test("Prim and Kruskal produce the same minimum spanning-tree cost", () => {
   assert.equal(kruskal.steps.at(-1)?.frame.edges?.filter((edge) => edge.state === "completed").length, nodes.length - 1);
 });
 
+test("Floyd-Warshall reports negative cycles instead of presenting finite shortest paths", () => {
+  const timeline = createTimeline(floydWarshallLesson, {
+    nodes: ["A", "B", "C"], start: "A",
+    edges: [{ from: "A", to: "B", weight: 1 }, { from: "B", to: "C", weight: -3 }, { from: "C", to: "A", weight: 1 }],
+  });
+  assert.equal(timeline.steps.at(-1)!.operation, "negative-cycle-detected");
+  assert.ok(!timeline.steps.some((step) => step.operation === "all-pairs-complete"));
+});
+
 test("Union-Find rejects cycle edges and merges a connected graph", () => {
   const timeline = createTimeline(unionFindLesson, positive);
   assert.match(timeline.steps.at(-1)?.frame.caption ?? "", /1 set remain/);

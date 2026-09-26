@@ -13,6 +13,8 @@ test("stored lesson progress is deduplicated, validated, and capped", () => {
   assert.equal(countStoredLessons('["a","b","c"]', 2), 2);
   assert.equal(countStoredLessons("not json", 8), 0);
   assert.equal(countStoredLessons(null, 8), 0);
+  assert.equal(countStoredLessons('["arrays","obsolete","arrays"]', 5, ["arrays", "strings"]), 1);
+  for (const course of curriculumModules) assert.equal(course.lessonIds.length, course.lessonCount);
 });
 
 test("curriculum progress identifies the first unfinished module", () => {

@@ -19,6 +19,10 @@ import {
 import { createTimeline } from "@/lib/visualization/index.ts";
 import type { VisualizationStep } from "@/lib/visualization/types.ts";
 import { useVisualizationPlayer } from "./use-visualization-player";
+import { CourseMenu } from "./course-menu";
+import { usePlaybackShortcuts } from "./use-playback-shortcuts";
+import { ProgressBadge } from "./progress-badge";
+import { parseCompletedLessons, readLocalValue, writeLocalValue } from "@/lib/local-progress.ts";
 
 const lessonOrder: AlgorithmLessonId[] = [
   "linear-search", "binary-search", "bubble-sort", "selection-sort", "insertion-sort",
@@ -130,45 +134,22 @@ export function SortingSearchingLab() {
   const definition = definitions[lessonId];
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("algolab-sorting-progress");
-    if (!stored) return;
-    try {
-      const parsed = JSON.parse(stored) as AlgorithmLessonId[];
-      // Progress is an external browser value and is restored only after hydration.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCompleted(parsed.filter((id) => lessonOrder.includes(id)));
-    }
-    catch { window.localStorage.removeItem("algolab-sorting-progress"); }
+    const restored = parseCompletedLessons(readLocalValue("algolab-sorting-progress"), lessonOrder);
+    queueMicrotask(() => setCompleted(restored));
   }, []);
 
   useEffect(() => {
     if (player.state.status !== "completed") return;
-    // Completion is emitted by the player; mirror that external state locally.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCompleted((previous) => {
+    // Parse before scheduling: malformed stored data must never escape a microtask.
+    queueMicrotask(() => setCompleted((previous) => {
       if (previous.includes(lessonId)) return previous;
-      const next = [...previous, lessonId];
-      window.localStorage.setItem("algolab-sorting-progress", JSON.stringify(next));
+      const next = [...new Set([...parseCompletedLessons(readLocalValue("algolab-sorting-progress"), lessonOrder), ...previous, lessonId])];
+      writeLocalValue("algolab-sorting-progress", JSON.stringify(next));
       return next;
-    });
+    }));
   }, [lessonId, player.state.status]);
 
-  useEffect(() => {
-    const handleKeyboard = (event: KeyboardEvent) => {
-      const element = event.target as HTMLElement | null;
-      if (["INPUT", "BUTTON", "SELECT"].includes(element?.tagName ?? "")) return;
-      if (event.code === "Space") {
-        event.preventDefault();
-        if (player.state.status === "playing") player.pause();
-        else player.play();
-      }
-      if (event.key === "ArrowRight") player.next();
-      if (event.key === "ArrowLeft") player.previous();
-      if (event.key.toLowerCase() === "r") player.reset();
-    };
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [player]);
+  usePlaybackShortcuts(player);
 
   const selectLesson = (next: AlgorithmLessonId) => {
     player.reset();
@@ -211,7 +192,7 @@ export function SortingSearchingLab() {
       </aside>
 
       <section className="workspace">
-        <header className="topbar"><div><span>Checkpoint 5</span><b>/</b><strong>Searching & sorting</strong></div><span className="local-badge"><i />Progress saved locally</span></header>
+        <header className="topbar"><div><span>Checkpoint 5</span><b>/</b><strong>Searching & sorting</strong></div><div className="topbar-actions"><CourseMenu currentPath="/sorting-searching" /><ProgressBadge /></div></header>
         <div className="page-content linear-content">
           <label className="mobile-lesson-select">Choose lesson<select value={lessonId} onChange={(event) => selectLesson(event.target.value as AlgorithmLessonId)}>{lessonOrder.map((id) => <option value={id} key={id}>{algorithmMeta[id].navLabel}</option>)}</select></label>
           <section className="page-heading foundation-heading"><div><span className="eyebrow">ALGORITHM {lessonOrder.indexOf(lessonId) + 1} OF 10 · TEST YOUR OWN DATA</span><h1>{meta.title}</h1><p>{meta.description}</p></div><div className="shortcut-hint"><span>⌨</span><p><strong>Keyboard controls</strong><small>Space · ← → · R</small></p></div></section>

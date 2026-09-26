@@ -101,12 +101,22 @@ function matrixFrame(input: WeightedGraphInput, distances: number[][], active: [
 
 export const floydWarshallLesson: LessonDefinition<WeightedGraphInput> = {
   id: "floyd-warshall", title: "Floyd–Warshall algorithm", category: "algorithm",
-  code: ["def floyd_warshall(distance):", "    for via in range(n):", "        for start in range(n):", "            for end in range(n):", "                candidate = distance[start][via] + distance[via][end]", "                distance[start][end] = min(distance[start][end], candidate)", "    return distance"],
+  code: ["def floyd_warshall(distance):", "    for via in range(n):", "        for start in range(n):", "            for end in range(n):", "                candidate = distance[start][via] + distance[via][end]", "                distance[start][end] = min(distance[start][end], candidate)", "    if any(distance[v][v] < 0 for v in range(n)):", "        raise ValueError('Negative cycle')", "    return distance"],
   validate: (input) => validateWeighted(input, true),
   createSteps: (input) => {
     const n = input.nodes.length; const distances = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => i === j ? 0 : Infinity)); input.edges.forEach((edge) => { const i = input.nodes.indexOf(edge.from); const j = input.nodes.indexOf(edge.to); distances[i][j] = Math.min(distances[i][j], edge.weight); }); const steps: VisualizationStep[] = [{ id: "floyd-0", operation: "initialize-matrix", explanation: "Start with 0 on the diagonal, direct edge weights, and infinity where no direct route exists.", codeLine: 0, frame: matrixFrame(input, distances, null, false, "Direct distances only") }]; let sequence = 1;
     for (let via = 0; via < n; via += 1) { steps.push({ id: `floyd-${sequence++}`, operation: "choose-intermediate", explanation: `Allow ${input.nodes[via]} as an intermediate stop. Compare every start-to-end pair through it.`, codeLine: 1, frame: matrixFrame(input, distances, null, false, `Intermediate vertex: ${input.nodes[via]}`, input.nodes[via]) }); for (let start = 0; start < n; start += 1) for (let end = 0; end < n; end += 1) { const candidate = distances[start][via] + distances[via][end]; if (candidate < distances[start][end]) { const old = distances[start][end]; distances[start][end] = candidate; steps.push({ id: `floyd-${sequence++}`, operation: "improve-pair", explanation: `${input.nodes[start]} → ${input.nodes[via]} → ${input.nodes[end]} costs ${candidate}, improving ${Number.isFinite(old) ? old : "∞"}.`, codeLine: 5, frame: matrixFrame(input, distances, [start, end], false, `${input.nodes[start]} → ${input.nodes[end]} becomes ${candidate}`, input.nodes[via]) }); } } }
-    steps.push({ id: "floyd-complete", operation: "all-pairs-complete", explanation: "Every vertex has been considered as an intermediate, so the matrix contains all-pairs shortest distances.", codeLine: 6, frame: matrixFrame(input, distances, null, true, "All-pairs shortest paths") }); return steps;
+    const cycleVertex = distances.findIndex((row, index) => row[index] < 0);
+    if (cycleVertex >= 0) {
+      steps.push({
+        id: "floyd-negative-cycle", operation: "negative-cycle-detected", codeLine: 7,
+        explanation: `The cost from ${input.nodes[cycleVertex]} back to itself is negative. Repeating this cycle keeps reducing the cost, so routes through it have no finite shortest distance. These intermediate numbers are not valid final shortest paths.`,
+        frame: { ...matrixFrame(input, distances, [cycleVertex, cycleVertex], false, "Negative cycle · no finite shortest paths through the cycle"), output: ["Negative cycle detected", "Intermediate values only"] },
+      });
+    } else {
+      steps.push({ id: "floyd-complete", operation: "all-pairs-complete", explanation: "Every vertex has been considered as an intermediate, so the matrix contains all-pairs shortest distances.", codeLine: 8, frame: matrixFrame(input, distances, null, true, "All-pairs shortest paths") });
+    }
+    return steps;
   },
 };
 

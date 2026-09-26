@@ -137,3 +137,27 @@ test("server-renders the complete curriculum map", async () => {
   assert.match(html, /Algorithmic techniques/);
   assert.match(html, /Progress saved locally|Local learning profile/);
 });
+
+test("server-renders the cross-curriculum Practice Lab", async () => {
+  const response = await render("/practice");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Practice Lab/);
+  assert.match(html, /An O\(n\) scan processes 100 values/);
+  assert.match(html, /Check answer/);
+  assert.match(html, /Module mastery/i);
+  assert.match(html, /Results saved locally/);
+});
+
+test("every learning surface includes the direct course selector", async () => {
+  for (const path of ["/", "/graph-foundations", "/curriculum", "/practice"]) {
+    const response = await render(path);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, /Open course menu/);
+    assert.match(html, /Select a course/);
+    assert.match(html, /href="\/linear-structures"/);
+    assert.match(html, /href="\/weighted-graphs"/);
+    assert.match(html, /href="\/practice"/);
+  }
+});

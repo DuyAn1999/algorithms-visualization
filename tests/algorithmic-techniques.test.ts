@@ -54,6 +54,13 @@ test("sliding window reuses work and finds the best fixed range", () => {
   assert.equal(timeline.steps.filter((step) => step.operation === "slide-window").length, 3);
 });
 
+test("backtracking highlights only the selected occurrences of duplicate values", () => {
+  const timeline = createTimeline(backtrackingLesson, { values: [3, 3, 4], target: 3 });
+  const chosen = timeline.steps.at(-1)!.frame.items.filter((item) => item.state === "completed");
+  assert.deepEqual(chosen.map((item) => item.id), ["technique-0"]);
+  assert.equal(chosen.reduce((sum, item) => sum + Number(item.value), 0), 3);
+});
+
 test("technique curriculum includes seven complete usage guides", () => {
   const lessons = Object.values(techniqueMeta);
   assert.equal(lessons.length, 7);

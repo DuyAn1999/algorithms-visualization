@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import {
   createPlaybackState,
   playbackDelay,
@@ -11,14 +11,20 @@ import {
 export function useVisualizationPlayer<TInput extends object>(
   timeline: VisualizationTimeline<TInput>,
 ) {
-  const [state, dispatch] = useReducer(
+  const [storedState, dispatch] = useReducer(
     playbackReducer,
     createPlaybackState(timeline.steps.length),
   );
 
-  useEffect(() => {
+  const [loadedTimeline, setLoadedTimeline] = useState(timeline);
+  // Reset before children render: the old index/status belongs to another lesson.
+  const state = loadedTimeline === timeline
+    ? storedState
+    : createPlaybackState(timeline.steps.length, storedState.speed);
+  if (loadedTimeline !== timeline) {
+    setLoadedTimeline(timeline);
     dispatch({ type: "load", stepCount: timeline.steps.length });
-  }, [timeline]);
+  }
 
   useEffect(() => {
     if (state.status !== "playing") return;
